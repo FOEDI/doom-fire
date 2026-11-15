@@ -1,0 +1,24 @@
+{
+  "label": "Doom Fire",
+  "tags": [
+    "screensaver"
+  ],
+  "requires": [],
+  "version": "0.1.0",
+  "requiredVersions": {
+    "server": ">=0.11.13",
+    "client": ">=0.11.2"
+  },
+  "description": "Endless Doom fire simulation for DeskThing, inspired by the classic 1993 fire propagation algorithm.",
+  "author": "Foedi",
+  "platforms": [
+    "windows",
+    "linux",
+    "mac"
+  ],
+  "repository": "https://github.com/foedi/doom-fire",
+  "homepage": "",
+  "updateUrl": "",
+  "id": "doom-fire",
+  "template": "base"
+}
