@@ -4,12 +4,12 @@
     "screensaver"
   ],
   "requires": [],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "requiredVersions": {
     "server": ">=0.11.13",
     "client": ">=0.11.2"
   },
-  "description": "Endless Doom fire simulation for DeskThing, inspired by the classic 1993 fire propagation algorithm.",
+  "description": "Endless, customizable Doom-style fire simulation for DeskThing with adjustable palette, speed, and wind.",
   "author": "Foedi",
   "platforms": [
     "windows",

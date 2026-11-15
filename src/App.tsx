@@ -1,11 +1,42 @@
 import { useEffect, useRef } from "react";
-import { createFire, FIRE_PALETTE, spreadFire } from "./fire.js";
+import { createDeskThing } from "@deskthing/client";
+import { AppSettings, DEVICE_CLIENT } from "@deskthing/types";
+import {
+  createFire,
+  createFirePalette,
+  readFireSettings,
+  spreadFire,
+} from "./fire.js";
 
 const PIXEL_SIZE = 4;
-const FRAME_INTERVAL_MS = 40;
+const DeskThing = createDeskThing();
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const settingsRef = useRef(readFireSettings());
+  const paletteRef = useRef(createFirePalette(settingsRef.current.paletteStops));
+
+  useEffect(() => {
+    let mounted = true;
+    const applySettings = (settings?: AppSettings | null) => {
+      if (!mounted || !settings) return;
+      const next = readFireSettings(settings);
+      settingsRef.current = next;
+      paletteRef.current = createFirePalette(next.paletteStops);
+    };
+
+    const removeSettingsListener = DeskThing.on(DEVICE_CLIENT.SETTINGS, (data) => {
+      applySettings(data?.payload as AppSettings | undefined);
+    });
+    void DeskThing.getSettings().then(applySettings).catch((error: unknown) => {
+      console.warn("Unable to load Doom Fire settings:", error);
+    });
+
+    return () => {
+      mounted = false;
+      removeSettingsListener();
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -32,12 +63,14 @@ function App() {
 
     const draw = (timestamp: number) => {
       frame = window.requestAnimationFrame(draw);
-      if (timestamp - lastFrame < FRAME_INTERVAL_MS) return;
+      const settings = settingsRef.current;
+      if (timestamp - lastFrame < settings.speedMs) return;
       lastFrame = timestamp;
 
-      spreadFire(fire, width, height);
+      spreadFire(fire, width, height, Math.random, settings.wind);
+      const palette = paletteRef.current;
       for (let i = 0; i < fire.length; i += 1) {
-        const [red, green, blue] = FIRE_PALETTE[fire[i]];
+        const [red, green, blue] = palette[fire[i]];
         const pixel = i * 4;
         image.data[pixel] = red;
         image.data[pixel + 1] = green;
